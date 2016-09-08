@@ -4,9 +4,25 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<title>Insert title here</title>
+<title>Sistema de Controle de Mecânica - PWM20162S</title>
+<link rel="stylesheet" href="css/home.css">
+<link rel="stylesheet" href="css/styles.css">
 </head>
 <body>
+<div id="container">
+	<div id="header">Sistema de Controle de Mecânica - PWM20162S</div><!--
+	--><div id="aside">
+		<h1><u>MENU</u></h1>
+		<ul>
+			<li><a href="marca/consultar.jsp" target="main-content-iframe">Marca</a></li>
+			<li><a href="javascript:;" target="main-content-iframe">Modelo</a></li>
+			<li><a href="javascript:;" target="main-content-iframe">Veículo</a></li>
+			<li><a href="javascript:;" target="main-content-iframe">Cliente</a></li>
+		</ul>
+	</div><!--
+	--><div id="main-content">
+		<iframe name="main-content-iframe" id="main-content-iframe"></iframe>
+	</div>
+</div>
 
-</body>
-</html>
+</body></html>

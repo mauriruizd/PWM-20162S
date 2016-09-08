@@ -1,0 +1,10 @@
+input[type=text] {
+	width: 100%;
+	display: block;
+}
+
+#buttons-container {
+	width: 95%;
+	margin: auto;
+	text-align: right;
+}

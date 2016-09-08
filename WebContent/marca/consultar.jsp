@@ -1,3 +1,4 @@
+<%@page import="org.postgresql.util.PSQLException"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
 <%@ page import = "br.edu.udc.sistemas.poo2_20161S.entity.Marca" %>
@@ -23,7 +24,22 @@
 			listaMarca = SessionMarca.find(marca);
 			break;
 		case "remove":
-			//
+			try {
+				SessionMarca.remove(marca);
+				infoMsg = "Remoção efeituada com sucesso";
+			} catch (PSQLException e) {
+				switch (e.getSQLState()) {
+					case "23503":
+						errorMsg = "Existe um registro associado a esta marca, portanto não foi possível efetuar a remoção";
+						break;
+					case "23505":
+						errorMsg = "Já existe uma marca com essa descrição";
+						break;
+					default:
+						errorMsg = "Houve um erro no momento de concretar a operação";
+				}
+				errorDetail = e.getMessage();
+			}
 		}
 	}
 %>
@@ -60,6 +76,13 @@
 			<% } %>
 		</div>
 	<% } %>
+	
+	<% if(infoMsg != null) { %>
+		<div class="server-msg info-msg">
+			<%= infoMsg %>
+		</div>
+	<% } %>
+	
 	<h1>Consultar Marca</h1>
 	<div>
 		<form action="consultar.jsp" method="POST" onsubmit="return validate();">
@@ -94,7 +117,6 @@
 			<td>
 				<a class="btn btn-delete" href="consultar.jsp?newAction=remove&amp;codigo=<%= nMarca.getIdMarca() %>" onclick="return confirmarExclusao();">Excluir</a>
 				<a href="manter.jsp?newAction=detail&amp;codigo=<%= nMarca.getIdMarca() %>" class="btn btn-edit">Editar</a>
-				
 			</td>
 		</tr>
 		<% } %>		

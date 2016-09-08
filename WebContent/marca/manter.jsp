@@ -11,7 +11,6 @@
 	String action = request.getParameter("newAction");
 	
 	Marca marca = new Marca();
-	Marca listaMarca[] = new Marca[0];
 	
 	if( action != null && !action.equals("") ) {	
 		try {
@@ -20,8 +19,14 @@
 		marca.setDescricao(request.getParameter("descricao"));
 		
 		switch (action) {
-		case "find":
-			listaMarca = SessionMarca.find(marca);
+		case "save":
+			try {
+				SessionMarca.save(marca);
+				infoMsg = "Marca salva com sucesso";
+			} catch(PSQLException e) {
+				errorMsg = "Houve um erro no momento de concretar a operação";
+				errorDetail = e.getMessage();
+			}
 			break;
 		case "remove":
 			try {
@@ -41,6 +46,18 @@
 				errorDetail = e.getMessage();
 			}
 			marca = new Marca();
+		case "detail":
+			Marca marcaAux = new Marca();
+			try {
+				marcaAux.setIdMarca(Integer.parseInt(request.getParameter("codigo")));
+				marcaAux = SessionMarca.findByPrimary(marcaAux);
+				if (marcaAux != null) {
+					marca = marcaAux;
+				}
+			} catch(Exception e) {
+				errorMsg = "A marca especificada não foi encontrada.";
+			}
+			break;
 		}
 	}
 %>
@@ -48,14 +65,14 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<title>Consultar Marca</title>
+<title>Manter Marca</title>
 <link rel="stylesheet" href="../css/forms.css">
 <link rel="stylesheet" href="../css/styles.css">
 
 <script src="../js/scripts.js"></script>
 <script>
 	function confirmarExclusao() {
-		return confirm('Confirma exclusao?');
+		return $('#codigo').value != "" && confirm('Confirma exclusao?');
 	}
 
 	function validate() {
@@ -84,45 +101,23 @@
 		</div>
 	<% } %>
 	
-	<h1>Consultar Marca</h1>
+	<h1>Manter Marca</h1>
 	<div>
-		<form action="consultar.jsp" method="POST" onsubmit="return validate();">
-			<input name="newAction" id="newAction" value="find" type="hidden">
+		<form action="manter.jsp" method="POST" onsubmit="return validate();">
+			<input name="newAction" id="newAction" value="save" type="hidden">
 			<label for="codigo">Código</label>
 			<input class="limpavel" id="codigo" name="codigo" style="width: 200px;" 
-			value="<%= marca.getIdMarca() == null ? "" : marca.getIdMarca() %>" type="text">
+			value="<%= marca.getIdMarca() == null ? "" : marca.getIdMarca() %>" type="text" readonly>
 			<label for="descricao">Descrição</label>
 			<input class="limpavel" id="descricao" name="descricao" 
-			value="<%= marca.getDescricao() == null ? "" : marca.getDescricao() %>" type="text">
+			value="<%= marca.getDescricao() == null ? "" : marca.getDescricao() %>" type="text" required>
 			<div id="buttons-container">
-				<button type="submit" class="btn btn-default">Consultar</button>
+				<button type="submit" class="btn btn-default">Salvar</button>
 				<button type="button" class="btn btn-default" onclick="clean('.limpavel')">Limpar</button>
-				<a href="manter.jsp" class="btn btn-default">Novo</a>
+				<a class="btn btn-default" href="manter.jsp?newAction=remove&codigo=<%= marca.getIdMarca() %>" onclick="return confirmarExclusao();">Excluir</a>
+				<a href="consultar.jsp" class="btn btn-default">Voltar</a>
 			</div>
 		</form>
-	</div>
-	<div id="results-container">
-	<table>
-		<thead>
-			<tr>
-				<th class="short-cell">Código</th>
-				<th>Descrição</th>
-				<th class="medium-cell">Ações</th>
-			</tr>
-		</thead>
-		<tbody>
-		<% for(Marca nMarca : listaMarca) { %>
-		<tr>
-			<td><%= nMarca.getIdMarca() %></td>
-			<td><%= nMarca.getDescricao() %></td>
-			<td>
-				<a class="btn btn-delete" href="consultar.jsp?newAction=remove&codigo=<%= nMarca.getIdMarca() %>" onclick="return confirmarExclusao();">Excluir</a>
-				<a href="manter.jsp?newAction=detail&codigo=<%= nMarca.getIdMarca() %>" class="btn btn-edit">Editar</a>
-			</td>
-		</tr>
-		<% } %>		
-		</tbody>
-	</table>
 	</div>
 </body>
 </html>

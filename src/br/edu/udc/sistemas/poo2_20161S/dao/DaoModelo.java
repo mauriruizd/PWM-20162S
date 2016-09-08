@@ -22,14 +22,14 @@ public class DaoModelo {
 			try {
 				if ((modelo.getIdModelo() != null) &&
 					(modelo.getIdModelo() > 0)) {
-					sql = "update modelo set " +
+					sql = "update modelos set " +
 					      "descricao = '" + modelo.getDescricao() + "', " +
 					      "idmarca = " + modelo.getMarca().getIdMarca() + " " +
 					      "where idmodelo = " + modelo.getIdModelo();
 					System.out.println(sql);
 					stmt.execute(sql);
 				} else {
-					sql = "insert into modelo (descricao,idmarca) " +
+					sql = "insert into modelos (descricao,idmarca) " +
 						  "values('" + modelo.getDescricao() + "', " +
 						   modelo.getMarca().getIdMarca() +  ")";
 					System.out.println(sql);
@@ -60,7 +60,7 @@ public class DaoModelo {
 			Connection con = Database.getInstance().getConnection();
 			Statement stmt = con.createStatement();
 			try {
-				String sql = "delete from modelo " + "where idmodelo = " + modelo.getIdModelo();
+				String sql = "delete from modelos " + "where idmodelo = " + modelo.getIdModelo();
 				System.out.println(sql);
 				stmt.execute(sql);
 			} catch (Exception e) {
@@ -82,7 +82,7 @@ public class DaoModelo {
 		Statement stmt = con.createStatement();
 		ResultSet rst = null;
 		try {
-			String sql = "select idmodelo,descricao,idmarca from modelo";
+			String sql = "select idmodelo,descricao,idmarca from modelos";
 			if (modelo != null) {
 				boolean bWhere = false;
 				if (modelo.getIdModelo() != null) {

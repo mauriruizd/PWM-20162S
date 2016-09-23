@@ -40,7 +40,7 @@ public class DaoCliente {
 							"values('" + cliente.getNome() + "','" + 
 							cliente.getRg() + "','" + 
 							cliente.getCpf() + "','" + 
-							cliente.getDataNascimento().toGMTString() + "','" + 
+							cliente.getDataNascimento().toString() + "','" + 
 							cliente.getLogradouro() + "','" + 
 							cliente.getNumero() + "','" + 
 							cliente.getBairro() + "','" + 
@@ -97,7 +97,7 @@ public class DaoCliente {
 		Statement stmt = con.createStatement();
 		ResultSet rst = null;
 		try {
-			String sql = "select idmarca,nome, rg, cpf, data_nascimento, logradouro," +
+			String sql = "select idcliente,nome, rg, cpf, data_nascimento, logradouro," +
 							"numero, bairro, cidade, estado, cep from clientes";
 			if (cliente != null) {
 				boolean bWhere = false;
@@ -121,7 +121,7 @@ public class DaoCliente {
 						sql += " where ";
 						bWhere = true;
 					}
-					sql += "rg like '%" + cliente.getRg().replace(" ", "%") + "%'";
+					sql += "rg = '" + cliente.getRg() + "'";
 				}
 				if ((cliente.getCpf() != null) && (!cliente.getCpf().equals(""))) {
 					if (bWhere) {
@@ -130,7 +130,7 @@ public class DaoCliente {
 						sql += " where ";
 						bWhere = true;
 					}
-					sql += "cpf like '%" + cliente.getCpf().replace(" ", "%") + "%'";
+					sql += "cpf = '" + cliente.getCpf() + "'";
 				}
 				if ((cliente.getDataNascimento() != null) && (!cliente.getDataNascimento().equals(""))) {
 					if (bWhere) {
@@ -139,7 +139,7 @@ public class DaoCliente {
 						sql += " where ";
 						bWhere = true;
 					}
-					sql += "data_nascimento like '%" + cliente.getDataNascimento().toGMTString().replace(" ", "%") + "%'";
+					sql += "data_nascimento = '" + cliente.getDataNascimento().toGMTString() + "'";
 				}
 				if ((cliente.getLogradouro() != null) && (!cliente.getLogradouro().equals(""))) {
 					if (bWhere) {
@@ -195,7 +195,7 @@ public class DaoCliente {
 					}
 					sql += "cep like '%" + cliente.getCep().replace(" ", "%") + "%'";
 				}
-				sql += " order by descricao";
+				sql += " order by nome";
 			}
 			System.out.println(sql);
 			rst = stmt.executeQuery(sql);

@@ -1,6 +1,5 @@
-<%@page import="java.util.Calendar"%>
-<%@page import="org.postgresql.util.PSQLException"%>
 <%@page import="java.sql.Date"%>
+<%@page import="org.postgresql.util.PSQLException"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
 <%@ page import = "br.edu.udc.sistemas.poo2_20161S.entity.Cliente" %>
@@ -13,9 +12,8 @@
 	String action = request.getParameter("newAction");
 	
 	Cliente cliente = new Cliente();
-	Cliente listaCliente[] = new Cliente[0];
 	
-	if(action != null && !action.equals("")) {
+	if( action != null && !action.equals("") ) {	
 		try {
 			cliente.setIdCliente(Integer.parseInt(request.getParameter("codigo")));
 		} catch(Exception e) {}
@@ -32,28 +30,43 @@
 		cliente.setEstado(request.getParameter("estado"));
 		cliente.setCep(request.getParameter("cep"));
 		
-		switch(action) {
-		case "find":
-			listaCliente = SessionCliente.find(cliente);
+		switch (action) {
+		case "save":
+			try {
+				SessionCliente.save(cliente);
+				infoMsg = "Cliente salvo com sucesso";
+			} catch(PSQLException e) {
+				errorMsg = "Houve um erro no momento de concretar a operação";
+				errorDetail = e.getMessage();
+			}
 			break;
 		case "remove":
 			try {
 				SessionCliente.remove(cliente);
 				infoMsg = "Remoção efeituada com sucesso";
-			} catch(PSQLException e) {
-				switch(e.getSQLState()) {
-				case "23503":
-					errorMsg = "Existe um registro associado a esta marca, portanto não foi possível efetuar a remoção";
-					break;
-				case "23505":
-					errorMsg = "Já existe uma marca com essa descrição";
-					break;
-				default:
-					errorMsg = "Houve um erro no momento de concretar a operação";
+			} catch (PSQLException e) {
+				switch (e.getSQLState()) {
+					case "23503":
+						errorMsg = "Existe um registro associado a este cliente, portanto não foi possível efetuar a remoção";
+						break;
+					default:
+						errorMsg = "Houve um erro no momento de concretar a operação";
 				}
 				errorDetail = e.getMessage();
 			}
 			cliente = new Cliente();
+			break;
+		case "detail":
+			Cliente clienteAux = new Cliente();
+			try {
+				clienteAux.setIdCliente(Integer.parseInt(request.getParameter("codigo")));
+				clienteAux = SessionCliente.findByPrimary(clienteAux);
+				if (clienteAux != null) {
+					cliente = clienteAux;
+				}
+			} catch(Exception e) {
+				errorMsg = "O cliente especificado não foi encontrado.";
+			}
 			break;
 		}
 	}
@@ -62,14 +75,14 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<title>Consultar Cliente</title>
+<title>Manter Cliente</title>
 <link rel="stylesheet" href="../css/forms.css">
 <link rel="stylesheet" href="../css/styles.css">
 
 <script src="../js/scripts.js"></script>
 <script>
 	function confirmarExclusao() {
-		return confirm('Confirma exclusao?');
+		return $('#codigo').value != "" && confirm('Confirma exclusao?');
 	}
 
 	function validate() {
@@ -98,10 +111,10 @@
 		</div>
 	<% } %>
 	
-	<h1>Consultar Cliente</h1>
+	<h1>Manter Cliente</h1>
 	<div>
-		<form action="consultar.jsp" method="POST" onsubmit="return validate();">
-			<input name="newAction" id="newAction" value="find" type="hidden">
+		<form action="manter.jsp" method="POST" onsubmit="return validate();">
+			<input name="newAction" id="newAction" value="save" type="hidden">
 			<label for="codigo">Código</label>
 			<input class="limpavel" id="codigo" name="codigo" style="width: 200px;" 
 			value="<%= cliente.getIdCliente() == null ? "" : cliente.getIdCliente() %>" type="text">
@@ -140,54 +153,12 @@
 			value="<%= cliente.getCep() == null ? "" : cliente.getCep() %>" type="text">
 			
 			<div id="buttons-container">
-				<button type="submit" class="btn btn-default">Consultar</button>
+				<button type="submit" class="btn btn-default">Salvar</button>
 				<button type="button" class="btn btn-default" onclick="clean('.limpavel')">Limpar</button>
-				<a href="manter.jsp" class="btn btn-default">Novo</a>
+				<a class="btn btn-default" href="manter.jsp?newAction=remove&codigo=<%= cliente.getIdCliente() %>" onclick="return confirmarExclusao();">Excluir</a>
+				<a href="consultar.jsp" class="btn btn-default">Voltar</a>
 			</div>
 		</form>
-	</div>
-	<div id="results-container">
-	<table>
-		<thead>
-			<tr>
-				<th class="short-cell">Código</th>
-				<th>Nome</th>
-				<th>RG</th>
-				<th>CPF</th>
-				<th>Data de nascimento</th>
-				<th>Logradouro</th>
-				<th>Número</th>
-				<th>Bairro</th>
-				<th>Cidade</th>
-				<th>Estado</th>
-				<th>CEP</th>
-				<th class="medium-cell">Ações</th>
-			</tr>
-		</thead>
-		<tbody>
-		<% for(Cliente nCliente : listaCliente) { %>
-		<tr>
-			<td><%= nCliente.getIdCliente() %></td>
-			<td><%= nCliente.getNome() %></td>
-			<td><%= nCliente.getRg() %></td>
-			<td><%= nCliente.getCpf() %></td>
-			<td><%= nCliente.getDataNascimento().getDate() + "/" + 
-				nCliente.getDataNascimento().getMonth() + "/" + 
-				nCliente.getDataNascimento().getYear() %></td>
-			<td><%= nCliente.getLogradouro() %></td>
-			<td><%= nCliente.getNumero() %></td>
-			<td><%= nCliente.getBairro() %></td>
-			<td><%= nCliente.getCidade() %></td>
-			<td><%= nCliente.getEstado() %></td>
-			<td><%= nCliente.getCep() %></td>
-			<td>
-				<a class="btn btn-delete" href="consultar.jsp?newAction=remove&codigo=<%= nCliente.getIdCliente() %>" onclick="return confirmarExclusao();">Excluir</a>
-				<a href="manter.jsp?newAction=detail&codigo=<%= nCliente.getIdCliente() %>" class="btn btn-edit">Editar</a>
-			</td>
-		</tr>
-		<% } %>		
-		</tbody>
-	</table>
 	</div>
 </body>
 </html>

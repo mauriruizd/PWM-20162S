@@ -33,7 +33,7 @@ public class Modelo implements Entity {
 	@Override
 	public String toString() {
 		return ((this.idModelo == null) ? "" : String.valueOf(this.idModelo)) + " - " +
-			   ((this.descricao == null) ? "" : this.descricao) +
+			   ((this.descricao == null) ? "" : this.descricao) + " - " + 
 			   ((this.marca == null) ? "" : ((this.marca.getDescricao() == null) ? "" : this.marca.getDescricao()));
 				   
 	}
@@ -52,8 +52,8 @@ public class Modelo implements Entity {
 	@Override
 	public String[] getFieldGUINames() {
 		String fieldNames[] = new String[3];
-		fieldNames[0] = "Código";
-		fieldNames[1] = "Descrição";
+		fieldNames[0] = "Cï¿½digo";
+		fieldNames[1] = "Descriï¿½ï¿½o";
 		fieldNames[2] = "Marca";
 		return fieldNames;
 	}

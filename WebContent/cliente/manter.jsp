@@ -117,7 +117,7 @@
 			<input name="newAction" id="newAction" value="save" type="hidden">
 			<label for="codigo">Código</label>
 			<input class="limpavel" id="codigo" name="codigo" style="width: 200px;" 
-			value="<%= cliente.getIdCliente() == null ? "" : cliente.getIdCliente() %>" type="text">
+			value="<%= cliente.getIdCliente() == null ? "" : cliente.getIdCliente() %>" type="text" readonly>
 			<label for="descricao">Nome</label>
 			<input class="limpavel" id="nome" name="nome" 
 			value="<%= cliente.getNome() == null ? "" : cliente.getNome() %>" type="text">

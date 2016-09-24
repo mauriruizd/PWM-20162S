@@ -16,7 +16,7 @@
 		<ul>
 			<li><a href="marca/consultar.jsp" target="main-content-iframe">Marca</a></li>
 			<li><a href="modelo/consultar.jsp" target="main-content-iframe">Modelo</a></li>
-			<li><a href="javascript:;" target="main-content-iframe">Veículo</a></li>
+			<li><a href="veiculo/consultar.jsp" target="main-content-iframe">Veículo</a></li>
 			<li><a href="cliente/consultar.jsp" target="main-content-iframe">Cliente</a></li>
 		</ul>
 	</div><!--

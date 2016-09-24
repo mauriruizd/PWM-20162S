@@ -1,12 +1,11 @@
 <%@page import="org.postgresql.util.PSQLException"%>
-<%@page import="java.sql.Date"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
-<%@ page import = "br.edu.udc.sistemas.poo2_20161S.entity.Modelo" %>
 <%@ page import = "br.edu.udc.sistemas.poo2_20161S.entity.Cliente" %>
+<%@ page import = "br.edu.udc.sistemas.poo2_20161S.entity.Modelo" %>
 <%@ page import = "br.edu.udc.sistemas.poo2_20161S.entity.Veiculo" %>
-<%@ page import = "br.edu.udc.sistemas.poo2_20161S.session.SessionModelo" %>
 <%@ page import = "br.edu.udc.sistemas.poo2_20161S.session.SessionCliente" %>
+<%@ page import = "br.edu.udc.sistemas.poo2_20161S.session.SessionModelo" %>
 <%@ page import = "br.edu.udc.sistemas.poo2_20161S.session.SessionVeiculo" %>
 <%
 	String errorMsg = null;
@@ -15,17 +14,13 @@
 	
 	String action = request.getParameter("newAction");
 	
-	Modelo modelo = new Modelo();
-	Modelo listModelo[] = new Modelo[0];
-	Cliente cliente = new Cliente();
-	Cliente listCliente[] = new Cliente[0];
 	Veiculo veiculo = new Veiculo();
-	Veiculo listVeiculo[] = new Veiculo[0];
-	
-	listCliente = SessionCliente.find(cliente);
-	listModelo = SessionModelo.find(modelo);
-	
-	if(action != null && !action.equals("")) {
+	Modelo modelo = new Modelo();
+	Cliente cliente = new Cliente();
+	Modelo listaModelo[] = SessionModelo.find(modelo);
+	Cliente listaCliente[] = SessionCliente.find(cliente);
+			
+	if( action != null && !action.equals("") ) {
 		try {
 			veiculo.setIdVeiculo(Integer.parseInt(request.getParameter("codigo")));
 		} catch(Exception e) {}
@@ -35,33 +30,53 @@
 		try {
 			cliente.setIdCliente(Integer.parseInt(request.getParameter("idCliente")));
 		} catch(Exception e) {}
+		
 		veiculo.setPlaca(request.getParameter("placa"));
 		veiculo.setCor(request.getParameter("cor"));
 		try {
 			veiculo.setAno(Integer.parseInt(request.getParameter("ano")));
 		} catch(Exception e) {}
+		
 		veiculo.setModelo(modelo);
 		veiculo.setCliente(cliente);
 		
-		switch(action) {
-		case "find":
-			listVeiculo = SessionVeiculo.find(veiculo);
+		switch (action) {
+		case "save":
+			try {
+				SessionVeiculo.save(veiculo);
+				infoMsg = "veículo salvo com sucesso";
+			} catch(PSQLException e) {
+				errorMsg = "Houve um erro no momento de concretar a operação";
+				errorDetail = e.getMessage();
+			}
 			break;
 		case "remove":
 			try {
 				SessionVeiculo.remove(veiculo);
 				infoMsg = "Remoção efeituada com sucesso";
-			} catch(PSQLException e) {
-				switch(e.getSQLState()) {
-				case "23503":
-					errorMsg = "Existe um registro associado a este veículo, portanto não foi possível efetuar a remoção";
-					break;
-				default:
-					errorMsg = "Houve um erro no momento de concretar a operação";
+			} catch (PSQLException e) {
+				switch (e.getSQLState()) {
+					case "23503":
+						errorMsg = "Existe um registro associado a este veículo, portanto não foi possível efetuar a remoção";
+						break;
+					default:
+						errorMsg = "Houve um erro no momento de concretar a operação";
 				}
 				errorDetail = e.getMessage();
 			}
 			veiculo = new Veiculo();
+			break;
+		case "detail":
+			Veiculo veiculoAux = new Veiculo();
+			try {
+				veiculoAux.setIdVeiculo(Integer.parseInt(request.getParameter("codigo")));
+				veiculoAux = SessionVeiculo.findByPrimary(veiculoAux);
+				if (veiculoAux != null) {
+					veiculo = veiculoAux;
+				}
+			} catch(Exception e) {
+				errorMsg = "O veículo especificado não foi encontrado.";
+			}
 			break;
 		}
 	}
@@ -70,17 +85,25 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<title>Consultar Veículo</title>
+<title>Manter Veículo</title>
 <link rel="stylesheet" href="../css/forms.css">
 <link rel="stylesheet" href="../css/styles.css">
 
 <script src="../js/scripts.js"></script>
 <script>
 	function confirmarExclusao() {
-		return confirm('Confirma exclusao?');
+		return $('#codigo').value != "" && confirm('Confirma exclusao?');
 	}
 
 	function validate() {
+		if ($('#idModelo').value == "") {
+			alert('Campo "Modelo" obrigatório!');
+			return false;
+		}
+		if ($('#idCliente').value == "") {
+			alert('Campo "Cliente" obrigatório!');
+			return false;
+		}
 		return true;
 	}
 </script>
@@ -106,13 +129,13 @@
 		</div>
 	<% } %>
 	
-	<h1>Consultar Veículo</h1>
+	<h1>Manter Veículo</h1>
 	<div>
-		<form action="consultar.jsp" method="POST" onsubmit="return validate();">
-			<input name="newAction" id="newAction" value="find" type="hidden">
+		<form action="manter.jsp" method="POST" onsubmit="return validate();">
+			<input name="newAction" id="newAction" value="save" type="hidden">
 			<label for="codigo">Código</label>
 			<input class="limpavel" id="codigo" name="codigo" style="width: 200px;" 
-			value="<%= veiculo.getIdVeiculo() == null ? "" : veiculo.getIdVeiculo() %>" type="text">
+			value="<%= veiculo.getIdVeiculo() == null ? "" : veiculo.getIdVeiculo() %>" type="text" readonly>
 			<label for="placa">Placa</label>
 			<input class="limpavel" id="placa" name="placa" 
 			value="<%= veiculo.getPlaca() == null ? "" : veiculo.getPlaca() %>" type="text">
@@ -126,7 +149,7 @@
 			<label for="idCliente">Cliente</label><br>
 			<select id="idCliente" class="limpavel" name="idCliente">
 				<option value="">Selecione Cliente</option>
-				<% for(Cliente nCliente : listCliente) { %>
+				<% for(Cliente nCliente : listaCliente) { %>
 					<option <%= veiculo.getCliente() == null ? "" : (
 							veiculo.getCliente().equals(nCliente) ? "selected" : ""
 							) %> value="<%= nCliente.getIdCliente() %>">
@@ -138,7 +161,7 @@
 			<label for="idModelo">Modelo</label><br>
 			<select id="idModelo" class="limpavel" name="idModelo">
 				<option value="">Selecione Modelo</option>
-				<% for(Modelo nModelo : listModelo) { %>
+				<% for(Modelo nModelo : listaModelo) { %>
 					<option <%= veiculo.getModelo() == null ? "" : (
 							veiculo.getModelo().equals(nModelo) ? "selected" : ""
 							) %> value="<%= nModelo.getIdModelo() %>">
@@ -148,42 +171,12 @@
 			</select><br>
 			
 			<div id="buttons-container">
-				<button type="submit" class="btn btn-default">Consultar</button>
+				<button type="submit" class="btn btn-default">Salvar</button>
 				<button type="button" class="btn btn-default" onclick="clean('.limpavel')">Limpar</button>
-				<a href="manter.jsp" class="btn btn-default">Novo</a>
+				<a class="btn btn-default" href="manter.jsp?newAction=remove&codigo=<%= veiculo.getIdVeiculo() %>" onclick="return confirmarExclusao();">Excluir</a>
+				<a href="consultar.jsp" class="btn btn-default">Voltar</a>
 			</div>
 		</form>
-	</div>
-	<div id="results-container">
-	<table>
-		<thead>
-			<tr>
-				<th class="short-cell">Código</th>
-				<th>Placa</th>
-				<th>Cor</th>
-				<th>Ano</th>
-				<th>Cliente</th>
-				<th>Modelo</th>
-				<th class="medium-cell">Ações</th>
-			</tr>
-		</thead>
-		<tbody>
-		<% for(Veiculo nVeiculo : listVeiculo) { %>
-		<tr>
-			<td><%= nVeiculo.getIdVeiculo() %></td>
-			<td><%= nVeiculo.getPlaca() %></td>
-			<td><%= nVeiculo.getCor() %></td>
-			<td><%= nVeiculo.getAno() %></td>
-			<td><%= nVeiculo.getCliente().getNome() %></td>
-			<td><%= nVeiculo.getModelo().getDescricao() %></td>
-			<td>
-				<a class="btn btn-delete" href="consultar.jsp?newAction=remove&codigo=<%= nVeiculo.getIdVeiculo() %>" onclick="return confirmarExclusao();">Excluir</a>
-				<a href="manter.jsp?newAction=detail&codigo=<%= nVeiculo.getIdVeiculo() %>" class="btn btn-edit">Editar</a>
-			</td>
-		</tr>
-		<% } %>		
-		</tbody>
-	</table>
 	</div>
 </body>
 </html>

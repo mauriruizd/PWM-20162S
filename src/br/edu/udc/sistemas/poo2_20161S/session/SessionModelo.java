@@ -11,10 +11,12 @@ public class SessionModelo {
 	}
 	
 	public static void save(Modelo modelo, boolean bCommit) throws Exception {
-		DaoModelo.save(modelo);
+		DaoModelo dao = new DaoModelo();
+		dao.save(modelo);
 		if (bCommit) {
-			DaoModelo.commit();
+			dao.commit();
 		}
+		dao.endTransaction();
 	}
 	
 	public static void remove(Modelo modelo) throws Exception {
@@ -22,23 +24,28 @@ public class SessionModelo {
 	}
 
 	public static void remove(Modelo modelo, boolean bCommit) throws Exception {
-		DaoModelo.remove(modelo);
+		DaoModelo dao = new DaoModelo();
+		dao.remove(modelo);
 		if (bCommit) {
-			DaoModelo.commit();
+			dao.commit();
 		}
+		dao.endTransaction();
 	}
 	
 	public static Modelo[] find(Modelo modelo) throws Exception {
-		Modelo listModelo[] =  DaoModelo.find(modelo);
-		
+		DaoModelo dao = new DaoModelo();
+		Modelo listModelo[] =  dao.find(modelo);
 		for (int i = 0; i < listModelo.length; i++) {
-			listModelo[i].setMarca(DaoMarca.findByPrimary(listModelo[i].getMarca()));
+			listModelo[i].setMarca(SessionMarca.findByPrimary(listModelo[i].getMarca()));
 		}
-		
+		dao.endTransaction();
 		return listModelo;
 	}
 	
 	public static Modelo findByPrimary(Modelo modelo) throws Exception {
-		return DaoModelo.findByPrimary(modelo);
+		DaoModelo dao = new DaoModelo();
+		Modelo modeloRetorno = dao.findByPrimary(modelo);
+		dao.endTransaction();
+		return modeloRetorno;
 	}	
 }

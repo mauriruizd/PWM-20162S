@@ -9,13 +9,21 @@ import java.util.Vector;
 import br.edu.udc.sistemas.poo2_20161S.entity.Cliente;
 import br.edu.udc.sistemas.poo2_20161S.entity.Modelo;
 import br.edu.udc.sistemas.poo2_20161S.entity.Veiculo;
-import br.edu.udc.sistemas.poo2_20161S.infra.Database;
+import br.edu.udc.sistemas.poo2_20161S.infra.DatabasePool;
 
-public class DaoVeiculo {
+public class DaoVeiculo extends Dao {
+	
+	public DaoVeiculo() throws Exception {
+		super();
+	}
+	
+	public DaoVeiculo(Connection con) throws Exception {
+		super(con);
+	}
 
-	public static void save(Veiculo veiculo) throws Exception {
+	public void save(Veiculo veiculo) throws Exception {
 		if (veiculo != null) {
-			Connection con = Database.getInstance().getConnection();
+			Connection con = DatabasePool.getInstance().getConnection();
 			Statement stmt = con.createStatement();
 			ResultSet rst = null;
 			String sql = "";
@@ -47,7 +55,7 @@ public class DaoVeiculo {
 				}
 			} catch (Exception e) {
 				try {
-					DaoVeiculo.rollback();
+					this.rollback();
 				} catch (Exception e2) {}
 				throw e;
 			} finally {
@@ -61,9 +69,9 @@ public class DaoVeiculo {
 		}
 	}
 
-	public static void remove(Veiculo veiculo) throws Exception {
+	public void remove(Veiculo veiculo) throws Exception {
 		if ((veiculo != null) && (veiculo.getIdVeiculo() != null)) {
-			Connection con = Database.getInstance().getConnection();
+			Connection con = DatabasePool.getInstance().getConnection();
 			Statement stmt = con.createStatement();
 			try {
 				String sql = "delete from veiculos " + "where idveiculo = " + veiculo.getIdVeiculo();
@@ -71,7 +79,7 @@ public class DaoVeiculo {
 				stmt.execute(sql);
 			} catch (Exception e) {
 				try {
-					DaoVeiculo.rollback();
+					this.rollback();
 				} catch (Exception e2) {}
 				throw e;
 			} finally {
@@ -82,9 +90,9 @@ public class DaoVeiculo {
 		}
 	}
 
-	public static Veiculo[] find(Veiculo veiculo) throws Exception {
+	public Veiculo[] find(Veiculo veiculo) throws Exception {
 		Collection <Veiculo> result = new Vector <Veiculo> ();
-		Connection con = Database.getInstance().getConnection();
+		Connection con = DatabasePool.getInstance().getConnection();
 		Statement stmt = con.createStatement();
 		ResultSet rst = null;
 		try {
@@ -169,7 +177,7 @@ public class DaoVeiculo {
 			}
 		} catch (Exception e) {
 			try {
-				DaoVeiculo.rollback();
+				this.rollback();
 			} catch (Exception e2) {}
 			throw e;
 		} finally {
@@ -183,24 +191,16 @@ public class DaoVeiculo {
 		return result.toArray(new Veiculo[result.size()]);
 	}
 
-	public static Veiculo findByPrimary(Veiculo veiculo) throws Exception {
+	public Veiculo findByPrimary(Veiculo veiculo) throws Exception {
 		if ((veiculo != null) && (veiculo.getIdVeiculo() != null)) {
 			Veiculo veiculoAux = new Veiculo();
 			veiculoAux.setIdVeiculo(veiculo.getIdVeiculo());
-			Veiculo list[] = DaoVeiculo.find(veiculoAux);
+			Veiculo list[] = this.find(veiculoAux);
 			if (list.length > 0) {
 				return list[0];
 			}
 		}
 		return null;
-	}
-	
-	public static void rollback() throws Exception {
-		Database.getInstance().getConnection().rollback();
-	}
-	
-	public static void commit() throws Exception {
-		Database.getInstance().getConnection().commit();
 	}
 
 }

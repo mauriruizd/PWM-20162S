@@ -21,7 +21,7 @@
 		</ul>
 	</div><!--
 	--><div id="main-content">
-		<iframe name="main-content-iframe" id="main-content-iframe"></iframe>
+		<iframe src="marca/consultar.jsp" name="main-content-iframe" id="main-content-iframe"></iframe>
 	</div>
 </div>
 

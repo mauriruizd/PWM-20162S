@@ -9,13 +9,21 @@ import java.util.Vector;
 
 import br.edu.udc.sistemas.poo2_20161S.entity.Marca;
 import br.edu.udc.sistemas.poo2_20161S.entity.Modelo;
-import br.edu.udc.sistemas.poo2_20161S.infra.Database;
+import br.edu.udc.sistemas.poo2_20161S.infra.DatabasePool;
 
-public class DaoModelo {
+public class DaoModelo extends Dao {
+	
+	public DaoModelo() throws Exception {
+		super();
+	}
+	
+	public DaoModelo(Connection con) throws Exception {
+		super(con);
+	}
 
-	public static void save(Modelo modelo) throws Exception {
+	public void save(Modelo modelo) throws Exception {
 		if (modelo != null) {
-			Connection con = Database.getInstance().getConnection();
+			Connection con = DatabasePool.getInstance().getConnection();
 			Statement stmt = con.createStatement();
 			ResultSet rst = null;
 			String sql = "";
@@ -41,7 +49,7 @@ public class DaoModelo {
 				}
 			} catch (Exception e) {
 				try {
-					DaoModelo.rollback();
+					this.rollback();
 				} catch (Exception e2) {}
 				throw e;
 			} finally {
@@ -55,9 +63,9 @@ public class DaoModelo {
 		}
 	}
 
-	public static void remove(Modelo modelo) throws Exception {
+	public void remove(Modelo modelo) throws Exception {
 		if ((modelo != null) && (modelo.getIdModelo() != null)) {
-			Connection con = Database.getInstance().getConnection();
+			Connection con = DatabasePool.getInstance().getConnection();
 			Statement stmt = con.createStatement();
 			try {
 				String sql = "delete from modelos " + "where idmodelo = " + modelo.getIdModelo();
@@ -65,7 +73,7 @@ public class DaoModelo {
 				stmt.execute(sql);
 			} catch (Exception e) {
 				try {
-					DaoModelo.rollback();
+					this.rollback();
 				} catch (Exception e2) {}
 				throw e;
 			} finally {
@@ -76,9 +84,9 @@ public class DaoModelo {
 		}
 	}
 
-	public static Modelo[] find(Modelo modelo) throws Exception {
+	public Modelo[] find(Modelo modelo) throws Exception {
 		Collection <Modelo> result = new Vector <Modelo> ();
-		Connection con = Database.getInstance().getConnection();
+		Connection con = DatabasePool.getInstance().getConnection();
 		Statement stmt = con.createStatement();
 		ResultSet rst = null;
 		try {
@@ -126,7 +134,7 @@ public class DaoModelo {
 			}
 		} catch (Exception e) {
 			try {
-				DaoModelo.rollback();
+				this.rollback();
 			} catch (Exception e2) {}
 			throw e;
 		} finally {
@@ -140,24 +148,16 @@ public class DaoModelo {
 		return result.toArray(new Modelo[result.size()]);
 	}
 
-	public static Modelo findByPrimary(Modelo modelo) throws Exception {
+	public Modelo findByPrimary(Modelo modelo) throws Exception {
 		if ((modelo != null) && (modelo.getIdModelo() != null)) {
 			Modelo modeloAux = new Modelo();
 			modeloAux.setIdModelo(modelo.getIdModelo());
-			Modelo list[] = DaoModelo.find(modeloAux);
+			Modelo list[] = this.find(modeloAux);
 			if (list.length > 0) {
 				return list[0];
 			}
 		}
 		return null;
-	}
-	
-	public static void rollback() throws Exception {
-		Database.getInstance().getConnection().rollback();
-	}
-	
-	public static void commit() throws Exception {
-		Database.getInstance().getConnection().commit();
 	}
 
 }

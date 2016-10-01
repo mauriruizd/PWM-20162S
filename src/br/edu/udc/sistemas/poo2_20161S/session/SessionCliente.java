@@ -9,10 +9,12 @@ public class SessionCliente {
 	}
 	
 	public static void save(Cliente cliente, boolean bCommit) throws Exception {
-		DaoCliente.save(cliente);
+		DaoCliente dao = new DaoCliente();
+		dao.save(cliente);
 		if (bCommit) {
-			DaoCliente.commit();
+			dao.commit();
 		}
+		dao.endTransaction();
 	}
 	
 	public static void remove(Cliente cliente) throws Exception {
@@ -20,17 +22,25 @@ public class SessionCliente {
 	}
 
 	public static void remove(Cliente cliente, boolean bCommit) throws Exception {
-		DaoCliente.remove(cliente);
+		DaoCliente dao = new DaoCliente();
+		dao.remove(cliente);
 		if (bCommit) {
-			DaoCliente.commit();
+			dao.commit();
 		}
+		dao.endTransaction();
 	}
 	
 	public static Cliente[] find(Cliente cliente) throws Exception {
-		return DaoCliente.find(cliente);
+		DaoCliente dao = new DaoCliente();
+		Cliente list[] = dao.find(cliente);
+		dao.endTransaction();
+		return list;
 	}
 	
 	public static Cliente findByPrimary(Cliente cliente) throws Exception {
-		return DaoCliente.findByPrimary(cliente);
+		DaoCliente dao = new DaoCliente();
+		Cliente clienteRetorno = dao.findByPrimary(cliente);
+		dao.endTransaction();
+		return clienteRetorno;
 	}	
 }

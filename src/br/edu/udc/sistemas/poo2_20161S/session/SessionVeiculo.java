@@ -12,10 +12,12 @@ public class SessionVeiculo {
 	}
 	
 	public static void save(Veiculo veiculo, boolean bCommit) throws Exception {
-		DaoVeiculo.save(veiculo);
+		DaoVeiculo dao = new DaoVeiculo();
+		dao.save(veiculo);
 		if (bCommit) {
-			DaoVeiculo.commit();
+			dao.commit();
 		}
+		dao.endTransaction();
 	}
 	
 	public static void remove(Veiculo veiculo) throws Exception {
@@ -23,24 +25,29 @@ public class SessionVeiculo {
 	}
 
 	public static void remove(Veiculo veiculo, boolean bCommit) throws Exception {
-		DaoVeiculo.remove(veiculo);
+		DaoVeiculo dao = new DaoVeiculo();
+		dao.remove(veiculo);
 		if (bCommit) {
-			DaoVeiculo.commit();
+			dao.commit();
 		}
+		dao.endTransaction();
 	}
 	
 	public static Veiculo[] find(Veiculo veiculo) throws Exception {
-		Veiculo listVeiculo[] =  DaoVeiculo.find(veiculo);
-		
+		DaoVeiculo dao = new DaoVeiculo();
+		Veiculo listVeiculo[] =  dao.find(veiculo);
 		for (int i = 0; i < listVeiculo.length; i++) {
-			listVeiculo[i].setModelo(DaoModelo.findByPrimary(listVeiculo[i].getModelo()));
-			listVeiculo[i].setCliente(DaoCliente.findByPrimary(listVeiculo[i].getCliente()));
+			listVeiculo[i].setModelo(SessionModelo.findByPrimary(listVeiculo[i].getModelo()));
+			listVeiculo[i].setCliente(SessionCliente.findByPrimary(listVeiculo[i].getCliente()));
 		}
-		
+		dao.endTransaction();
 		return listVeiculo;
 	}
 	
 	public static Veiculo findByPrimary(Veiculo veiculo) throws Exception {
-		return DaoVeiculo.findByPrimary(veiculo);
+		DaoVeiculo dao = new DaoVeiculo();
+		Veiculo veiculoRetorno = dao.findByPrimary(veiculo);
+		dao.endTransaction();
+		return veiculoRetorno;
 	}	
 }

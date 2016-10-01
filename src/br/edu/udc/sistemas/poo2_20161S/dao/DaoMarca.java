@@ -4,18 +4,23 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.Vector;
 
 import br.edu.udc.sistemas.poo2_20161S.entity.Marca;
-import br.edu.udc.sistemas.poo2_20161S.infra.Database;
 
-public class DaoMarca {
+public class DaoMarca extends Dao {
+	
+	public DaoMarca() throws Exception {
+		super();
+	}
+	
+	public DaoMarca(Connection con) throws Exception {
+		super(con);
+	}
 
-	public static void save(Marca marca) throws Exception {
+	public void save(Marca marca) throws Exception {
 		if (marca != null) {
-			Connection con = Database.getInstance().getConnection();
-			Statement stmt = con.createStatement();
+			Statement stmt = this.con.createStatement();
 			ResultSet rst = null;
 			String sql = "";
 			try {
@@ -38,7 +43,7 @@ public class DaoMarca {
 				}
 			} catch (Exception e) {
 				try {
-					DaoMarca.rollback();
+					this.rollback();
 				} catch (Exception e2) {}
 				throw e;
 			} finally {
@@ -52,17 +57,16 @@ public class DaoMarca {
 		}
 	}
 
-	public static void remove(Marca marca) throws Exception {
+	public void remove(Marca marca) throws Exception {
 		if ((marca != null) && (marca.getIdMarca() != null)) {
-			Connection con = Database.getInstance().getConnection();
-			Statement stmt = con.createStatement();
+			Statement stmt = this.con.createStatement();
 			try {
 				String sql = "delete from marcas " + "where idmarca = " + marca.getIdMarca();
 				System.out.println(sql);
 				stmt.execute(sql);
 			} catch (Exception e) {
 				try {
-					DaoMarca.rollback();
+					this.rollback();
 				} catch (Exception e2) {}
 				throw e;
 			} finally {
@@ -73,10 +77,9 @@ public class DaoMarca {
 		}
 	}
 
-	public static Marca[] find(Marca marca) throws Exception {
+	public Marca[] find(Marca marca) throws Exception {
 		Collection <Marca> result = new Vector <Marca> ();
-		Connection con = Database.getInstance().getConnection();
-		Statement stmt = con.createStatement();
+		Statement stmt = this.con.createStatement();
 		ResultSet rst = null;
 		try {
 			String sql = "select idmarca,descricao from marcas";
@@ -107,7 +110,7 @@ public class DaoMarca {
 			}
 		} catch (Exception e) {
 			try {
-				DaoMarca.rollback();
+				this.rollback();
 			} catch (Exception e2) {}
 			throw e;
 		} finally {
@@ -121,24 +124,15 @@ public class DaoMarca {
 		return result.toArray(new Marca[result.size()]);
 	}
 
-	public static Marca findByPrimary(Marca marca) throws Exception {
+	public Marca findByPrimary(Marca marca) throws Exception {
 		if ((marca != null) && (marca.getIdMarca() != null)) {
 			Marca marcaAux = new Marca();
 			marcaAux.setIdMarca(marca.getIdMarca());
-			Marca list[] = DaoMarca.find(marcaAux);
+			Marca list[] = this.find(marcaAux);
 			if (list.length > 0) {
 				return list[0];
 			}
 		}
 		return null;
 	}
-	
-	public static void rollback() throws Exception {
-		Database.getInstance().getConnection().rollback();
-	}
-	
-	public static void commit() throws Exception {
-		Database.getInstance().getConnection().commit();
-	}
-
 }

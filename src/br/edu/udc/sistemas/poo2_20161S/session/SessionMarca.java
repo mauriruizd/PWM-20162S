@@ -10,10 +10,12 @@ public class SessionMarca {
 	}
 	
 	public static void save(Marca marca, boolean bCommit) throws Exception {
-		DaoMarca.save(marca);
+		DaoMarca dao = new DaoMarca();
+		dao.save(marca);
 		if (bCommit) {
-			DaoMarca.commit();
+			dao.commit();
 		}
+		dao.endTransaction();
 	}
 	
 	public static void remove(Marca marca) throws Exception {
@@ -21,17 +23,25 @@ public class SessionMarca {
 	}
 
 	public static void remove(Marca marca, boolean bCommit) throws Exception {
-		DaoMarca.remove(marca);
+		DaoMarca dao = new DaoMarca();
+		dao.remove(marca);
 		if (bCommit) {
-			DaoMarca.commit();
+			dao.commit();
 		}
+		dao.endTransaction();
 	}
 	
 	public static Marca[] find(Marca marca) throws Exception {
-		return DaoMarca.find(marca);
+		DaoMarca dao = new DaoMarca();
+		Marca list[] = dao.find(marca);
+		dao.endTransaction();
+		return list;
 	}
 	
 	public static Marca findByPrimary(Marca marca) throws Exception {
-		return DaoMarca.findByPrimary(marca);
+		DaoMarca dao = new DaoMarca();
+		Marca marcaRetorno = dao.findByPrimary(marca);
+		dao.endTransaction();
+		return marcaRetorno;
 	}	
 }

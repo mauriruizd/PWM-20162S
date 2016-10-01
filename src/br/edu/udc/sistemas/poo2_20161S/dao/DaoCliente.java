@@ -8,12 +8,22 @@ import java.util.Vector;
 
 import br.edu.udc.sistemas.poo2_20161S.entity.Cliente;
 import br.edu.udc.sistemas.poo2_20161S.entity.Marca;
-import br.edu.udc.sistemas.poo2_20161S.infra.Database;
+import br.edu.udc.sistemas.poo2_20161S.infra.DatabasePool;
 
-public class DaoCliente {
-	public static void save(Cliente cliente) throws Exception {
+public class DaoCliente extends Dao {
+	
+	public DaoCliente() throws Exception {
+		super();
+	}
+	
+	public DaoCliente(Connection con) throws Exception {
+		super(con);
+		// TODO Auto-generated constructor stub
+	}
+
+	public void save(Cliente cliente) throws Exception {
 		if (cliente != null) {
-			Connection con = Database.getInstance().getConnection();
+			Connection con = DatabasePool.getInstance().getConnection();
 			Statement stmt = con.createStatement();
 			ResultSet rst = null;
 			String sql = "";
@@ -56,7 +66,7 @@ public class DaoCliente {
 				}
 			} catch (Exception e) {
 				try {
-					DaoMarca.rollback();
+					this.rollback();
 				} catch (Exception e2) {}
 				throw e;
 			} finally {
@@ -70,9 +80,9 @@ public class DaoCliente {
 		}
 	}
 
-	public static void remove(Cliente cliente) throws Exception {
+	public void remove(Cliente cliente) throws Exception {
 		if ((cliente != null) && (cliente.getIdCliente() != null)) {
-			Connection con = Database.getInstance().getConnection();
+			Connection con = DatabasePool.getInstance().getConnection();
 			Statement stmt = con.createStatement();
 			try {
 				String sql = "delete from clientes " + "where idcliente = " + cliente.getIdCliente();
@@ -80,7 +90,7 @@ public class DaoCliente {
 				stmt.execute(sql);
 			} catch (Exception e) {
 				try {
-					DaoMarca.rollback();
+					this.rollback();
 				} catch (Exception e2) {}
 				throw e;
 			} finally {
@@ -91,9 +101,9 @@ public class DaoCliente {
 		}
 	}
 
-	public static Cliente[] find(Cliente cliente) throws Exception {
+	public Cliente[] find(Cliente cliente) throws Exception {
 		Collection <Cliente> result = new Vector <Cliente> ();
-		Connection con = Database.getInstance().getConnection();
+		Connection con = DatabasePool.getInstance().getConnection();
 		Statement stmt = con.createStatement();
 		ResultSet rst = null;
 		try {
@@ -216,7 +226,7 @@ public class DaoCliente {
 			}
 		} catch (Exception e) {
 			try {
-				DaoMarca.rollback();
+				this.rollback();
 			} catch (Exception e2) {}
 			throw e;
 		} finally {
@@ -230,23 +240,15 @@ public class DaoCliente {
 		return result.toArray(new Cliente[result.size()]);
 	}
 
-	public static Cliente findByPrimary(Cliente cliente) throws Exception {
+	public Cliente findByPrimary(Cliente cliente) throws Exception {
 		if ((cliente != null) && (cliente.getIdCliente() != null)) {
 			Cliente clienteAux = new Cliente();
 			clienteAux.setIdCliente(cliente.getIdCliente());
-			Cliente list[] = DaoCliente.find(clienteAux);
+			Cliente list[] = this.find(clienteAux);
 			if (list.length > 0) {
 				return list[0];
 			}
 		}
 		return null;
-	}
-	
-	public static void rollback() throws Exception {
-		Database.getInstance().getConnection().rollback();
-	}
-	
-	public static void commit() throws Exception {
-		Database.getInstance().getConnection().commit();
 	}
 }

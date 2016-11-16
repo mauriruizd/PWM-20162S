@@ -1,8 +1,17 @@
 package br.edu.udc.sistemas.poo2_20161S.entity;
 
-public class Marca implements Entity {
+import br.edu.udc.sistemas.poo2_20161S.annotation.Column;
+import br.edu.udc.sistemas.poo2_20161S.annotation.Entity;
+import br.edu.udc.sistemas.poo2_20161S.annotation.Table;
 
+@Entity
+@Table(name="marca")
+public class Marca {
+
+	@Column(name="idmarca",type=Column.INTEGER)
 	private Integer idMarca;
+	
+	@Column(name="descricao",type=Column.STRING)
 	private String descricao;
 
 	public Integer getIdMarca() {
@@ -36,37 +45,5 @@ public class Marca implements Entity {
 			}
 		}
 		return false;
-	}
-
-	@Override
-	public String[] getFieldGUINames() {
-		String fieldNames[] = new String[2];
-		fieldNames[0] = "Código";
-		fieldNames[1] = "Descrição";
-		return fieldNames;
-	}	
-
-	@Override
-	public String[] getFieldGUIValues() {
-		String fieldValues[] = new String[2];
-		fieldValues[0] = String.valueOf(this.idMarca);
-		fieldValues[1] = this.descricao;
-		return fieldValues;
-	}
-	
-	@Override
-	public String[] getFieldDatabaseNames() {
-		String fieldNames[] = new String[2];
-		fieldNames[0] = "idmarca";
-		fieldNames[1] = "descricao";
-		return fieldNames;
-	}
-	
-	@Override
-	public String[] getFieldDatabaseValues() {
-		String fieldValues[] = new String[2];
-		fieldValues[0] = String.valueOf(this.idMarca);
-		fieldValues[1] = this.descricao;
-		return fieldValues;
 	}
 }

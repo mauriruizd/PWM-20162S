@@ -15,7 +15,6 @@ public class SessionMarca {
 		if (bCommit) {
 			dao.commit();
 		}
-		dao.endTransaction();
 	}
 	
 	public static void remove(Marca marca) throws Exception {
@@ -28,7 +27,6 @@ public class SessionMarca {
 		if (bCommit) {
 			dao.commit();
 		}
-		dao.endTransaction();
 	}
 	
 	public static Marca[] find(Marca marca) throws Exception {

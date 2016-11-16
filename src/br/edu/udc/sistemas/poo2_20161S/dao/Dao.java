@@ -16,24 +16,25 @@ public class Dao {
 		this.con = con;
 	}
 
-	public Connection getCon() {
+	public Connection getConnection() {
 		return con;
 	}
 
-	public void setCon(Connection con) {
+	public void setConnection(Connection con) {
 		this.con = con;
 	}
 	
 	public void rollback() throws Exception {
 		this.con.rollback();
+		this.endTransaction();
 	}
 	
 	public void commit() throws Exception {
 		this.con.commit();
+		this.endTransaction();
 	}
 	
 	public void endTransaction() throws Exception {
-		System.out.println("RELEASE");
 		DatabasePool.getInstance().releaseConnection(this.con);
 	}
 	

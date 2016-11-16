@@ -1,5 +1,10 @@
 package br.edu.udc.sistemas.poo2_20161S.entity;
 
+import br.edu.udc.sistemas.poo2_20161S.annotation.Entity;
+import br.edu.udc.sistemas.poo2_20161S.annotation.Table;
+
+@Entity
+@Table(name="veiculo")
 public class Veiculo {
 	
 	private Integer idVeiculo;

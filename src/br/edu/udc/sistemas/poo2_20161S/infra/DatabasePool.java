@@ -25,9 +25,11 @@ public class DatabasePool {
 	private Integer maxConnections;
 	private Boolean testOnBorrow;
 	private String sqlTest;
+	private Integer intervalConnectionTime;
+	private Integer maxConnectionTry;
 	
 
-	public static DatabasePool getInstance() throws Exception  {
+	public static synchronized DatabasePool getInstance() throws Exception  {
 		if (DatabasePool.databasePool == null) {
 			DatabasePool.databasePool = new DatabasePool();
 		}
@@ -52,6 +54,9 @@ public class DatabasePool {
 			this.maxConnections = Integer.parseInt(prop.getProperty("maxConnections"));
 			this.testOnBorrow = prop.getProperty("testOnBorrow").equals("true");
 			this.sqlTest = prop.getProperty("sqlTest");
+			this.intervalConnectionTime = Integer.parseInt(prop.getProperty("intervalConnectionTime"));
+			this.maxConnectionTry = Integer.parseInt(prop.getProperty("maxConnectionTry"));
+			
 			this.initialize();
 		} catch(Exception e) {
 			throw e;
@@ -95,18 +100,25 @@ public class DatabasePool {
 
 	public Connection getConnection() throws Exception {
 		Connection con = null;
-		for (int i = 0; i < this.connectionStatus.length; i++) {
-			if(this.connectionStatus[i]) {
-				this.testConnection(i);
-				con = this.connectionList[i];
-				this.connectionStatus[i] = false;
-				break;
+		int count = 0;
+		while( (con == null) && (count < this.maxConnectionTry) ) {
+			synchronized (Database.class) {
+				for (int i = 0; i < this.connectionStatus.length; i++) {
+					if(this.connectionStatus[i]) {
+						this.testConnection(i);
+						con = this.connectionList[i];
+						this.connectionStatus[i] = false;
+						break;
+					}
+				}
 			}
+			if (con != null) {
+				return con;
+			}
+			count++;
+			Thread.sleep(this.intervalConnectionTime);
 		}
-		if (con == null) {
-			throw new Exception("Não existem conexões disponíveis. Tente novamente.");
-		}
-		return con;
+		throw new Exception("Não existem conexões disponíveis. Tente novamente.");
 	}
 	
 	public void releaseConnection(Connection con) {

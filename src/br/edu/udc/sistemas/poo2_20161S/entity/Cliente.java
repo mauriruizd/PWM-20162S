@@ -2,7 +2,12 @@ package br.edu.udc.sistemas.poo2_20161S.entity;
 
 import java.sql.Date;
 
-public class Cliente implements Entity {
+import br.edu.udc.sistemas.poo2_20161S.annotation.Entity;
+import br.edu.udc.sistemas.poo2_20161S.annotation.Table;
+
+@Entity
+@Table(name="cliente")
+public class Cliente {
 	private Integer idCliente;
 	private String nome;
 	private String rg;
@@ -118,38 +123,6 @@ public class Cliente implements Entity {
 			}
 		}
 		return false;
-	}
-
-	@Override
-	public String[] getFieldGUINames() {
-		String fieldNames[] = new String[2];
-		fieldNames[0] = "Código";
-		fieldNames[1] = "Nome";
-		return fieldNames;
-	}	
-
-	@Override
-	public String[] getFieldGUIValues() {
-		String fieldValues[] = new String[2];
-		fieldValues[0] = String.valueOf(this.idCliente);
-		fieldValues[1] = this.nome;
-		return fieldValues;
-	}
-	
-	@Override
-	public String[] getFieldDatabaseNames() {
-		String fieldNames[] = new String[2];
-		fieldNames[0] = "idcliente";
-		fieldNames[1] = "nome";
-		return fieldNames;
-	}
-	
-	@Override
-	public String[] getFieldDatabaseValues() {
-		String fieldValues[] = new String[2];
-		fieldValues[0] = String.valueOf(this.idCliente);
-		fieldValues[1] = this.nome;
-		return fieldValues;
 	}
 
 }

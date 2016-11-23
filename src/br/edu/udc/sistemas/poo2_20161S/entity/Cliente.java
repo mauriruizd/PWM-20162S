@@ -1,23 +1,47 @@
 package br.edu.udc.sistemas.poo2_20161S.entity;
 
-import java.sql.Date;
-
+import br.edu.udc.sistemas.poo2_20161S.annotation.Column;
 import br.edu.udc.sistemas.poo2_20161S.annotation.Entity;
+import br.edu.udc.sistemas.poo2_20161S.annotation.GeneratedValue;
+import br.edu.udc.sistemas.poo2_20161S.annotation.Id;
 import br.edu.udc.sistemas.poo2_20161S.annotation.Table;
 
 @Entity
 @Table(name="cliente")
 public class Cliente {
+	@Id
+	@GeneratedValue
+	@Column(name="idcliente", type=Column.INTEGER)
 	private Integer idCliente;
+	
+	@Column(name="nome", type=Column.STRING)
 	private String nome;
+	
+	@Column(name="rg", type=Column.STRING)
 	private String rg;
+	
+	@Column(name="cpf", type=Column.STRING)
 	private String cpf;
-	private Date dataNascimento;
+	
+	@Column(name="datanascimento", type=Column.STRING)
+	private String dataNascimento;
+	
+	@Column(name="logradouro", type=Column.STRING)
 	private String logradouro;
+	
+	@Column(name="numero", type=Column.STRING)
 	private String numero;
+	
+	@Column(name="bairro", type=Column.STRING)
 	private String bairro;
+	
+	@Column(name="cidade", type=Column.STRING)
 	private String cidade;
+	
+	@Column(name="estado", type=Column.STRING)
 	private String estado;
+	
+	@Column(name="cep", type=Column.STRING)
 	private String cep;
 	
 	public Integer getIdCliente() {
@@ -52,11 +76,11 @@ public class Cliente {
 		this.cpf = cpf;
 	}
 
-	public Date getDataNascimento() {
+	public String getDataNascimento() {
 		return dataNascimento;
 	}
 
-	public void setDataNascimento(Date dataNascimento) {
+	public void setDataNascimento(String dataNascimento) {
 		this.dataNascimento = dataNascimento;
 	}
 

@@ -18,6 +18,7 @@ public @interface Column {
 	public static int LONG = 7;
 	public static int FLOAT = 8;
 	public static int OBJECT = 9;
+	public static int HIDDEN = 10;
 	
 	public String name() default "";
 	public int type() default Column.STRING;

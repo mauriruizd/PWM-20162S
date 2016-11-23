@@ -3,51 +3,30 @@ package br.edu.udc.sistemas.poo2_20161S.session;
 import br.edu.udc.sistemas.poo2_20161S.dao.DaoCliente;
 import br.edu.udc.sistemas.poo2_20161S.dao.DaoModelo;
 import br.edu.udc.sistemas.poo2_20161S.dao.DaoVeiculo;
+import br.edu.udc.sistemas.poo2_20161S.entity.Cliente;
+import br.edu.udc.sistemas.poo2_20161S.entity.Modelo;
 import br.edu.udc.sistemas.poo2_20161S.entity.Veiculo;
 
-public class SessionVeiculo {
+public class SessionVeiculo extends Session {
 
-	public static void save(Veiculo veiculo) throws Exception {
-		SessionVeiculo.save(veiculo,true);	
+	public SessionVeiculo() throws Exception {
+		super(DaoVeiculo.class);
 	}
 	
-	public static void save(Veiculo veiculo, boolean bCommit) throws Exception {
-		DaoVeiculo dao = new DaoVeiculo();
-		dao.save(veiculo);
-		if (bCommit) {
-			dao.commit();
-		}
-		dao.endTransaction();
-	}
-	
-	public static void remove(Veiculo veiculo) throws Exception {
-		SessionVeiculo.remove(veiculo,true);	
-	}
+	public Object[] find(Object object, boolean bCommit) throws Exception {
+        Object listVeiculo[] = super.find(object,false);
 
-	public static void remove(Veiculo veiculo, boolean bCommit) throws Exception {
-		DaoVeiculo dao = new DaoVeiculo();
-		dao.remove(veiculo);
-		if (bCommit) {
-			dao.commit();
-		}
-		dao.endTransaction();
-	}
-	
-	public static Veiculo[] find(Veiculo veiculo) throws Exception {
-		DaoVeiculo dao = new DaoVeiculo();
-		Veiculo listVeiculo[] =  dao.find(veiculo);
-		for (int i = 0; i < listVeiculo.length; i++) {
-			listVeiculo[i].setModelo(SessionModelo.findByPrimary(listVeiculo[i].getModelo()));
-			listVeiculo[i].setCliente(SessionCliente.findByPrimary(listVeiculo[i].getCliente()));
-		}
-		dao.endTransaction();
-		return listVeiculo;
-	}
-	
-	public static Veiculo findByPrimary(Veiculo veiculo) throws Exception {
-		DaoVeiculo dao = new DaoVeiculo();
-		Veiculo veiculoRetorno = dao.findByPrimary(veiculo);
-		dao.endTransaction();
-		return veiculoRetorno;
-	}	
+        DaoModelo daoModelo = new DaoModelo(this.getDao().getConnection());
+        DaoCliente daoCliente = new DaoCliente(this.getDao().getConnection());
+
+        for (int i = 0; i < listVeiculo.length; i++) {
+                Veiculo veiculoAux = (Veiculo) listVeiculo[i];
+                veiculoAux.setModelo( (Modelo) daoModelo.findByPrimary(veiculoAux.getModelo()));
+                veiculoAux.setCliente( (Cliente) daoCliente.findByPrimary(veiculoAux.getCliente()));
+        }
+        if (bCommit) {
+                this.getDao().commit();
+        }
+        return listVeiculo;
+	} 
 }

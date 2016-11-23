@@ -2,19 +2,23 @@ package br.edu.udc.sistemas.poo2_20161S.entity;
 
 import br.edu.udc.sistemas.poo2_20161S.annotation.Column;
 import br.edu.udc.sistemas.poo2_20161S.annotation.Entity;
+import br.edu.udc.sistemas.poo2_20161S.annotation.GeneratedValue;
+import br.edu.udc.sistemas.poo2_20161S.annotation.Id;
 import br.edu.udc.sistemas.poo2_20161S.annotation.Table;
 
 @Entity
 @Table(name="modelo")
 public class Modelo {
 
+	@Id
+	@GeneratedValue
 	@Column(name="idmodelo",type=Column.INTEGER)
 	private Integer idModelo;
 	
 	@Column(name="descricao",type=Column.STRING)
 	private String descricao;
 	
-	@Column(name="marca",type=Column.OBJECT)
+	@Column(name="idmarca",type=Column.OBJECT)
 	private Marca marca;
 
 	public Integer getIdModelo() {

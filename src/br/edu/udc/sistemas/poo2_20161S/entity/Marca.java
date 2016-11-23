@@ -2,12 +2,16 @@ package br.edu.udc.sistemas.poo2_20161S.entity;
 
 import br.edu.udc.sistemas.poo2_20161S.annotation.Column;
 import br.edu.udc.sistemas.poo2_20161S.annotation.Entity;
+import br.edu.udc.sistemas.poo2_20161S.annotation.GeneratedValue;
+import br.edu.udc.sistemas.poo2_20161S.annotation.Id;
 import br.edu.udc.sistemas.poo2_20161S.annotation.Table;
 
 @Entity
 @Table(name="marca")
 public class Marca {
 
+	@Id
+	@GeneratedValue
 	@Column(name="idmarca",type=Column.INTEGER)
 	private Integer idMarca;
 	

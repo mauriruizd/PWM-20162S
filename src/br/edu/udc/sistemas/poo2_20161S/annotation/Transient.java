@@ -1,4 +1,4 @@
-package br.edu.udc.sistemas.pwm20162s.annotation;
+package br.edu.udc.sistemas.poo2_20161S.annotation;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
